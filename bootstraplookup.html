@@ -10,16 +10,13 @@
   	
   	function() {
 	    $( "#tags" ).autocomplete({
-	      source: 'http://localhost:8080/bootstrap_lookup',
-	      onSelect: function (suggestion) {
-	        alert('You selected: ' + suggestion.value + ', ' + suggestion.data);
-	      }
+	      source: "/bootstraplookup/bootstraplookup"
 	    });
 	    
 	    $("#btn1").click(function(){
 	    	$.ajax(
 	    		{
-	    			url: "/bootstraplookup", 
+	    			url: "/bootstraplookup/bootstraplookup", 
 	    			success: function(result){
         				alert(result);
     				}
