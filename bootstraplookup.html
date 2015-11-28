@@ -9,8 +9,12 @@
   $(
   	
   	function() {
+  		var data = ["Boston Celtics", "Chicago Bulls", "Miami Heat", "Orlando Magic", "Atlanta Hawks", "Philadelphia Sixers", "New York Knicks", "Indiana Pacers", "Charlotte Bobcats", "Milwaukee Bucks", "Detroit Pistons", "New Jersey Nets", "Toronto Raptors", "Washington Wizards", "Cleveland Cavaliers"];
+  		
 	    $( "#tags" ).autocomplete({
-	      source: "/bootstraplookup/bootstraplookup"
+	      source: "/bootstraplookup/bootstraplookup",
+	      minLength: 3,
+	      // source:data
 	    });
 	    
 	    $("#btn1").click(function(){
