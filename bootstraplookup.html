@@ -4,29 +4,48 @@
   <title>jQuery UI Autocomplete - Default functionality</title>
   <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+  <script src="bootstrapDefinition.js"></script>
   <script>
   $(
   	
   	function() {
   		var data = ["Boston Celtics", "Chicago Bulls", "Miami Heat", "Orlando Magic", "Atlanta Hawks", "Philadelphia Sixers", "New York Knicks", "Indiana Pacers", "Charlotte Bobcats", "Milwaukee Bucks", "Detroit Pistons", "New Jersey Nets", "Toronto Raptors", "Washington Wizards", "Cleveland Cavaliers"];
   		
-	    $( "#tags" ).autocomplete({
-	      source: "/bootstraplookup/bootstraplookup",
+  		var listCache = {};
+  		function showDef( cssName ) {
+  		  if(cssName) {
+  		  	$.ajax({
+			  url: "/bootstrapdeflookup",
+			  // context: document.body
+			}).done(function( data ) {
+			    if ( data) {
+			      $( "<div>" ).text( data ).prependTo( "#defTextbox" );
+			      console.log( "Sample of data:", data.slice( 0, 100 ) );
+			    }
+			  });
+  		  } else {
+  		  }
+	    }
+  		
+	    $( "#cssName" ).autocomplete({
+	      source: function( request, response ) {
+	        var term = request.term;
+	        if ( term in listCache ) {
+	          response( listCache[ term ] );
+	          return;
+	        }
+	        $.getJSON( "/bootstraplookup", request, function( data, status, xhr ) {
+	          listCache[ term ] = data;
+	          response( data );
+	        });
+	      },
 	      minLength: 3,
-	      // source:data
+	      select: function( event, ui ) {
+	        showDef(ui.item);
+	      }
 	    });
-	    
-	    $("#btn1").click(function(){
-	    	$.ajax(
-	    		{
-	    			url: "/bootstraplookup/bootstraplookup", 
-	    			success: function(result){
-        				alert(result);
-    				}
-    			}
-    		);
-    	});
     }
   );
 
@@ -35,10 +54,13 @@
 <body>
  
 <div class="ui-widget">
-  <label for="tags">Tags: </label>
-  <input id="tags">
+  <label for="cssName">CSS Selector Name: </label>
+  <input id="cssName">
 </div>
- <p>Click on this paragraph.</p>
-    <button id="btn1">Reserve Book</button>
+<div ng-controller="bootstrapDefinitionController as btstrpCtrl" class="ui-widget" style="margin-top:2em; font-family:Arial">
+  Selector Definition:
+  <bootstrap-definition></bootstrap-definition>
+  <div id="defTextbox" style="height: 200px; width: 300px; overflow: auto;" class="ui-widget-content"></div>
+</div>
 </body>
 </html>
